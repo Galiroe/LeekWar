@@ -1,0 +1,67 @@
+//-----------------------------------------
+//---------- Librairie des armes ----------
+//-----------------------------------------
+
+//Attribution dynamique des armes
+global weaponPrefered;
+global weaponSecondary;
+global weaponTertiary;
+global orderedWeapons;
+if (orderedWeapons == null) {
+	orderedWeapons = awardWeapon();
+	weaponPrefered = orderedWeapons[0];
+	weaponSecondary = orderedWeapons[1];
+	weaponTertiary = orderedWeapons[2];
+}
+
+//Retourne le classement des armes du poireaux, de la plus forte à la moins forte
+function awardWeapon() {
+	var myWeapons = getWeapons();
+	var weaponsData = [];
+
+	//Construction du tableau de comparaison [[arme],[dmg_mini]]
+	for (var i = 0; i < count(myWeapons); i++) {
+		push(weaponsData, [myWeapons[i], getDmg(myWeapons[i])[1]]);
+	}
+	//trie du tableau de l'arme la plus puissante à la moins puissante
+	for (var i = 0; i < count(weaponsData); i++) {
+		if (weaponsData[i][1] < weaponsData[i + 1][1]) {
+			insert(weaponsData, weaponsData[i], i + 2);
+			remove(weaponsData, i);
+		}
+	}
+	//Creation du tableau d'armes a retourer
+	var weaponsRank = [];
+	for (var i = 0; i < count(weaponsData); i++) {
+		push(weaponsRank, weaponsData[i][0]);
+	}
+	return weaponsRank;
+}
+
+//Retourne le nombre de tire maximum possible avec l'arme avec TP-1 si besoin de setWeapon
+function getNbMaxTire(arme) {
+	var currentTP = (arme == getWeapon()) ? getTP() : getTP() - 1;
+	var nbTire = floor(currentTP / getWeaponCost(arme));
+	return nbTire;
+}
+
+//Recherche l'arme avec laquelle achever la cible, equipe et tire (multiples) si possibilité de coup de grace
+function deathBlow(cible) {
+	var myWeapons = awardWeapon();
+	var willDie = isDead(cible);
+	var i = 0;
+	while (!willDie and i < count(myWeapons)) {
+		if (getLife(cible) <= ((effectiveDmg(myWeapons[i], cible)[0]) * getNbMaxTire(myWeapons[i]))) {
+			debugW("COUP DE GRACE avec " + getWeaponName(myWeapons[i]) + " avec " + effectiveDmg(myWeapons[i], cible)[0] + " * " + getNbMaxTire(myWeapons[i]) + " tires");
+			UseAllWeaponLoop(myWeapons[i], cible);
+			if (isDead(cible)) {
+				willDie = true;
+			}
+		}
+		debug("Impossible de l'achever avec " + getWeaponName(myWeapons[i]));
+		i++;
+		debug("nombre d'arme = " + count(myWeapons));
+		debug("i = " + i);
+	}
+	return willDie;
+}

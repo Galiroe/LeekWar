@@ -1,0 +1,22 @@
+//-------------------------------------------
+//---------- Code des déplacements ----------
+//-------------------------------------------
+
+//Sortir de l'alignement d'une arme tirant en ligne
+function NoAlign(cible) {
+	if (isInlineWeapon(getWeapon(cible)) and isOnSameLine(getCell(), getCell(cible))) {
+		if (!isOnSameLine((getCell() + 18), getCell(cible)) and!isObstacle(getCell() + 18)) {
+			moveTowardCell(getCell() + 18);
+		}
+		//on tentre l'autre coté
+		else if (!isOnSameLine((getCell() - 18), getCell(cible)) and!isObstacle(getCell() - 18)) {
+			moveTowardCell(getCell() - 18);
+		} else if (!isOnSameLine(getCell(), (getCell(cible) + 17)) and!isObstacle(getCell(cible) + 17)) {
+			moveTowardCell(getCell() + 17);
+		}
+		//on tentre l'autre coté
+		else if (!isOnSameLine(getCell(), (getCell(cible) - 17)) and!isObstacle(getCell(cible) - 17)) {
+			moveTowardCell(getCell() - 17);
+		}
+	}
+}

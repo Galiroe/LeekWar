@@ -1,0 +1,21 @@
+//-----------------------------------------
+//---------- Librairie des puces ----------
+//-----------------------------------------
+
+//Cherche si la puce est équipé sur le poireaux puis la lance sur la cible
+function UseChipLoop(puce, target) {
+	var mes_puces = getChips();
+
+	if (search(mes_puces, puce) != null) {
+		var cout_puce = getChipCost(puce);
+		for (var i = getTP(); i >= cout_puce; i -= cout_puce) {
+			if (isAlive(target)) {
+				useChip(puce, target);
+			} else if (getNearestEnemy() != -1) {
+				useChip(puce, getNearestEnemy());
+			}
+		}
+	} else {
+		debugW("La puce " + getChipName(puce) + " n'est pas équipée sur le poireau " + getName());
+	}
+}
