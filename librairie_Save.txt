@@ -41,7 +41,7 @@ function getNbMaxTire(arme) {
 	return nbTire;
 }
 
-//retourne le tableau [min,max] des degats de l'arme
+//retourne le tableau des degats et effets des degats de l'arme ou puce "stuff"
 function getDmg(stuff) {
 	if (isWeapon(stuff)){
 		var type = getWeaponEffects(stuff)[0][0];
@@ -49,8 +49,9 @@ function getDmg(stuff) {
 		var weaponMaxDmg = getWeaponEffects(stuff)[0][2];
 		var turn = getWeaponEffects(stuff)[0][3];
 		var target = getWeaponEffects(stuff)[0][4];
+		var cumul =  = getWeaponEffects(stuff)[0][5];
 		
-		return [type,weaponMindmg,weaponMaxDmg,turn,target];
+		return [type,weaponMindmg,weaponMaxDmg,turn,target,cumul];
 	}
 	else if (isChip(stuff)) {
 		var type = getChipEffects(stuff)[0][0];
@@ -58,8 +59,9 @@ function getDmg(stuff) {
 		var chipMaxDmg = getChipEffects(stuff)[0][2];
 		var turn = getChipEffects(stuff)[0][3];
 		var target = getChipEffects(stuff)[0][4];
+		var cumul =  = getChipEffects(stuff)[0][5];
 		
-		return [type,chipMindmg,chipMaxDmg,turn,target];
+		return [type,chipMindmg,chipMaxDmg,turn,target,cumul];
 	}
 	else {
 		debugW ("Fonction getDmg : la valeur entrée en parametre n'est ni une arme ni une puce !");

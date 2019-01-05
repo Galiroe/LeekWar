@@ -45,6 +45,41 @@ function getNbMaxTire(weapon) {
 	return nbTire;
 }
 
+//Fonction qui retourne le tableau a deux dimensions des degats min/max/tours d'une arme ou d'une puce. Le degats peuvent etre repartis sur plusieurs effets successifs.
+function getDmg (stuff) {
+	//Attention, une valeur erroné de stuff peu obtenir le meme ID qu'une arme ou une puce
+	var allEffects;
+	var dmg = [];
+	if (isWeapon(stuff)) {
+		allEffects = getWeaponEffects (stuff);
+	}
+	else if (isChip(stuff)){
+		allEffects = getChipEffects (stuff);	
+	}
+	
+	for (var i=0;allEffects [i][0] == EFFECT_DAMAGE;i++){
+		var dmgMinMaxTurns = [allEffects[i][1],allEffects[i][2],allEffects[i][3]];
+		push(dmg, dmgMinMaxTurns);
+	}
+	return dmg;
+}
+
+//Tableau [min,max] des degats reels infligés à la cible par l'arme ou la puce en fonction de la force et des boucliers (relatif et absolu)
+function effectiveDmg(stuff, cible) {
+	var dmgMini = 0;
+	var dmgMaxi = 0;
+	var dmgAverage = 0;
+	var allDmg = getDmg(stuff);
+		
+		//Addition de tout les degats d'une arme/puce
+		for (var i=0;i<count(allDmg);i++) {
+			dmgMini += round((allDmg[i][0] * (1 + getStrength() / 100)) * (1 - getRelativeShield(cible) / 100) - getAbsoluteShield(cible));
+			dmgMaxi += round((allDmg[i][1] * (1 + getStrength() / 100)) * (1 - getRelativeShield(cible) / 100) - getAbsoluteShield(cible));
+		}
+		dmgAverage = (dmgMini+dmgMaxi)/2;
+	return [dmgMini, dmgMaxi, dmgAverage];
+}
+
 //Recherche l'arme avec laquelle achever la cible, equipe et tire (multiples) si possibilité de coup de grace
 function deathBlow(target) {
 	var myWeapons = awardWeapon();
@@ -52,7 +87,7 @@ function deathBlow(target) {
 	var i = 0;
 	while (!deadTarget and i < count(myWeapons)) {
 		if (getLife(target) <= ((effectiveDmg(myWeapons[i], target)[0]) * getNbMaxTire(myWeapons[i]))) {
-			debugW("COUP DE GRACE avec " + getWeaponName(myWeapons[i]) + " avec " + effectiveDmg(myWeapons[i], target)[0] + " * " + getNbMaxTire(myWeapons[i]) + " tires");
+			debugW("COUP DE GRACE possible avec " + getWeaponName(myWeapons[i]) + " avec " + effectiveDmg(myWeapons[i], target)[0] + " * " + getNbMaxTire(myWeapons[i]) + " tires");
 			UseAllWeaponLoop(myWeapons[i], target);
 			if (isDead(target)) {
 				deadTarget = true;

@@ -1,4 +1,4 @@
-# LeekWar
+# LeekWars
 
 Code LeekScript pour combat de poireaux sur https://leekwars.com/
 
