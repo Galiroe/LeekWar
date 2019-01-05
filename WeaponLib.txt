@@ -39,29 +39,26 @@ function awardWeapon() {
 }
 
 //Retourne le nombre de tire maximum possible avec l'arme avec TP-1 si besoin de setWeapon
-function getNbMaxTire(arme) {
-	var currentTP = (arme == getWeapon()) ? getTP() : getTP() - 1;
-	var nbTire = floor(currentTP / getWeaponCost(arme));
+function getNbMaxTire(weapon) {
+	var currentTP = (weapon == getWeapon()) ? getTP() : getTP() - 1;
+	var nbTire = floor(currentTP / getWeaponCost(weapon));
 	return nbTire;
 }
 
 //Recherche l'arme avec laquelle achever la cible, equipe et tire (multiples) si possibilité de coup de grace
-function deathBlow(cible) {
+function deathBlow(target) {
 	var myWeapons = awardWeapon();
-	var willDie = isDead(cible);
+	var deadTarget = isDead(target);
 	var i = 0;
-	while (!willDie and i < count(myWeapons)) {
-		if (getLife(cible) <= ((effectiveDmg(myWeapons[i], cible)[0]) * getNbMaxTire(myWeapons[i]))) {
-			debugW("COUP DE GRACE avec " + getWeaponName(myWeapons[i]) + " avec " + effectiveDmg(myWeapons[i], cible)[0] + " * " + getNbMaxTire(myWeapons[i]) + " tires");
-			UseAllWeaponLoop(myWeapons[i], cible);
-			if (isDead(cible)) {
-				willDie = true;
+	while (!deadTarget and i < count(myWeapons)) {
+		if (getLife(target) <= ((effectiveDmg(myWeapons[i], target)[0]) * getNbMaxTire(myWeapons[i]))) {
+			debugW("COUP DE GRACE avec " + getWeaponName(myWeapons[i]) + " avec " + effectiveDmg(myWeapons[i], target)[0] + " * " + getNbMaxTire(myWeapons[i]) + " tires");
+			UseAllWeaponLoop(myWeapons[i], target);
+			if (isDead(target)) {
+				deadTarget = true;
 			}
 		}
-		debug("Impossible de l'achever avec " + getWeaponName(myWeapons[i]));
 		i++;
-		debug("nombre d'arme = " + count(myWeapons));
-		debug("i = " + i);
 	}
-	return willDie;
+	return deadTarget;
 }
