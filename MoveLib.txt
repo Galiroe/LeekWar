@@ -20,3 +20,72 @@ function NoAlign(target) {
 		}
 	}
 }
+
+// Code Flo 
+
+// Librairie des déplacements
+
+
+
+/*
+Gere le tire, l'équipement de l'arme et le deplacement pour tirer (lvl 37)
+    Utiliser de preference les fonctions suivantes :
+        - UseAllWeapon(arme, cible)
+        - UseAllWeaponLoop(arme, cible)
+*/
+function UseAllWeaponBase(arme, cible, loop) {
+    //Verifie si un allié se trouve dans la zone d'effet de l'arme et exclus le tireur
+    var secureShoot = true;
+    if (getLevel() >= 39) {
+        var allTargets = getWeaponTargets(getCell(cible));
+        for (var i = count(allTargets) - 1; i >= 0; i--) {
+            if (isAlly(allTargets[i]) and allTargets[i] != getLeek()) secureShoot = false; //break pour economie de calcul?
+        }
+    }
+
+    if (secureShoot) {
+        //Si on ne peut pas utilisé l'arme, on se deplace sur la bonne cellule
+        if (!canUseWeapon(arme, cible) and getAliveEnemiesCount() > 0) {
+            //On recupere le tableaux des cellules d'ou on peut tirer
+            var cellules_valide = getCellsToUseWeapon(arme, cible);
+            var destination = null;
+            var taille_tableau = count(cellules_valide);
+            for (var i = 0; i < taille_tableau; i++) {
+                if (destination == null) {
+                    destination = cellules_valide[i];
+                    //On recupere la cellule la plus proche depuis laquelle on peut tirer
+                } else if (getPathLength(getCell(), cellules_valide[i]) < getPathLength(getCell(), destination)) {
+                    destination = cellules_valide[i];
+                }
+            }
+            mark(destination, COLOR_RED);
+debug("destination = " + destination);
+            //Deplacement uniquement si une destination a été trouvée
+            if (destination != null)
+            moveTowardCell(destination);
+        }
+
+        //On verifie si on peut tirer sur la cible avec l'arme
+        if (canUseWeapon(arme, cible)) {
+            //Prend l'arme demandé si ce n'est pas deja le cas
+            if (getWeapon() != arme) {
+                setWeapon(arme);
+            }
+            //On tire le maximum de fois possible
+            if (loop == true) {
+                for (var i = getTP(); i >= getWeaponCost(arme); i -= getWeaponCost(arme)) {
+                    useWeapon(cible);
+                }
+            } else {
+                //On fait feu normalement
+                useWeapon(cible);
+            }
+        }
+    } else {
+        debugW("Allier en danger, tire interdit");
+        /*
+        var othersWeapons = orderedWeapons;
+        remove(othersWeapons, search(othersWeapons, arme));
+        if (count(othersWeapons)>0)    UseAllWeaponBase(othersWeapons[0], cible,loop);*/
+	}
+}
