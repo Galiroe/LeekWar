@@ -19,3 +19,30 @@ function UseChipLoop(chip, target) {
 		debugW("La puce " + getChipName(chip) + " n'est pas équipée sur le poireau " + getName());
 	}
 }
+
+// ICI Flo 
+
+// Utilise un sort si possible un max defois
+function useMaxChip_(chip, enemy) {
+	if (!canUseChip(chip, enemy)) {
+		return false;
+	}
+	var lastTP = getTP();
+	while (lastTP >= getChipCost(chip)) {
+		useChip(chip, enemy);
+		if (lastTP == getTP()) {
+			break;
+		}
+		lastTP = getTP();
+	}
+	return true;
+}
+
+// Utilise un sort une fois si possible
+function tryAndUseChip(chip, leek) {
+	if (canUseChip(chip, leek)) {
+		useChip(chip,leek);
+		return true;
+	}
+	return false;
+}
