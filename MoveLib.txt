@@ -21,14 +21,8 @@ function NoAlign(target) {
 	}
 }
 
-// Code Flo 
-
-// Librairie des déplacements
-
-
-
 /*
-Gere le tire, l'équipement de l'arme et le deplacement pour tirer (lvl 37)
+Gere le tire, l'équipement de l'arme et le deplacement pour tirer
     Utiliser de preference les fonctions suivantes :
         - UseAllWeapon(arme, cible)
         - UseAllWeaponLoop(arme, cible)
